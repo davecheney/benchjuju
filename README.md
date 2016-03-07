@@ -1,6 +1,6 @@
 # benchjuju
 
-This is a Go compiler benchmark data set. This is not Juju, you want htts://github.com/juju/juju.
+This is a Go compiler benchmark data set. This is not Juju, you want https://github.com/juju/juju.
 
 This is a clone of Juju at revision NNN.
 
