@@ -1,0 +1,18 @@
+services:
+    wordpress:
+        charm: wordpress
+        num_units: 1
+        bindings:
+            db: db
+            url: public
+    mysql:
+        charm: mysql
+        num_units: 1
+        bindings:
+            server: db
+    logging:
+        charm: logging
+relations:
+    - ["wordpress:db", "mysql:server"]
+    - ["wordpress:juju-info", "logging:info"]
+    - ["mysql:juju-info", "logging:info"]

@@ -1,0 +1,137 @@
+// Copyright 2012, 2013 Canonical Ltd.
+// Licensed under the AGPLv3, see LICENCE file for details.
+
+package commands
+
+import (
+	"encoding/base64"
+	"fmt"
+	"sort"
+
+	"github.com/juju/cmd"
+	"github.com/juju/errors"
+	"github.com/juju/names"
+	"gopkg.in/juju/charm.v6-unstable/hooks"
+
+	"github.com/juju/juju/api/service"
+	"github.com/juju/juju/cmd/modelcmd"
+	unitdebug "github.com/juju/juju/worker/uniter/runner/debug"
+)
+
+func newDebugHooksCommand() cmd.Command {
+	return modelcmd.Wrap(&debugHooksCommand{})
+}
+
+// debugHooksCommand is responsible for launching a ssh shell on a given unit or machine.
+type debugHooksCommand struct {
+	sshCommand
+	hooks []string
+}
+
+const debugHooksDoc = `
+Interactively debug a hook remotely on a service unit.
+`
+
+func (c *debugHooksCommand) Info() *cmd.Info {
+	return &cmd.Info{
+		Name:    "debug-hooks",
+		Args:    "<unit name> [hook names]",
+		Purpose: "launch a tmux session to debug a hook",
+		Doc:     debugHooksDoc,
+	}
+}
+
+func (c *debugHooksCommand) Init(args []string) error {
+	if len(args) < 1 {
+		return fmt.Errorf("no unit name specified")
+	}
+	c.Target = args[0]
+	if !names.IsValidUnit(c.Target) {
+		return fmt.Errorf("%q is not a valid unit name", c.Target)
+	}
+
+	// If any of the hooks is "*", then debug all hooks.
+	c.hooks = append([]string{}, args[1:]...)
+	for _, h := range c.hooks {
+		if h == "*" {
+			c.hooks = nil
+			break
+		}
+	}
+	return nil
+}
+
+type charmRelationsApi interface {
+	CharmRelations(serviceName string) ([]string, error)
+}
+
+func (c *debugHooksCommand) getServiceAPI() (charmRelationsApi, error) {
+	root, err := c.NewAPIRoot()
+	if err != nil {
+		return nil, errors.Trace(err)
+	}
+	return service.NewClient(root), nil
+}
+
+func (c *debugHooksCommand) validateHooks() error {
+	if len(c.hooks) == 0 {
+		return nil
+	}
+	service, err := names.UnitService(c.Target)
+	if err != nil {
+		return err
+	}
+	serviceApi, err := c.getServiceAPI()
+	if err != nil {
+		return err
+	}
+	relations, err := serviceApi.CharmRelations(service)
+	if err != nil {
+		return err
+	}
+
+	validHooks := make(map[string]bool)
+	for _, hook := range hooks.UnitHooks() {
+		validHooks[string(hook)] = true
+	}
+	for _, relation := range relations {
+		for _, hook := range hooks.RelationHooks() {
+			hook := fmt.Sprintf("%s-%s", relation, hook)
+			validHooks[hook] = true
+		}
+	}
+	for _, hook := range c.hooks {
+		if !validHooks[hook] {
+			names := make([]string, 0, len(validHooks))
+			for hookName := range validHooks {
+				names = append(names, hookName)
+			}
+			sort.Strings(names)
+			logger.Infof("unknown hook %s, valid hook names: %v", hook, names)
+			return fmt.Errorf("unit %q does not contain hook %q", c.Target, hook)
+		}
+	}
+	return nil
+}
+
+// Run ensures c.Target is a unit, and resolves its address,
+// and connects to it via SSH to execute the debug-hooks
+// script.
+func (c *debugHooksCommand) Run(ctx *cmd.Context) error {
+	var err error
+	c.apiClient, err = c.initAPIClient()
+	if err != nil {
+		return err
+	}
+	defer c.apiClient.Close()
+	err = c.validateHooks()
+	if err != nil {
+		return err
+	}
+	debugctx := unitdebug.NewHooksContext(c.Target)
+	script := base64.StdEncoding.EncodeToString([]byte(unitdebug.ClientScript(debugctx, c.hooks)))
+	innercmd := fmt.Sprintf(`F=$(mktemp); echo %s | base64 -d > $F; . $F`, script)
+	args := []string{fmt.Sprintf("sudo /bin/bash -c '%s'", innercmd)}
+	c.Args = args
+	return c.sshCommand.Run(ctx)
+}

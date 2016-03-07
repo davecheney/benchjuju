@@ -1,0 +1,7 @@
+all:
+	- when API is stable, move to gopkg.in/macaroon.v1
+
+macaroon:
+
+	- change all signature calculations to correspond exactly
+	with libmacaroons.

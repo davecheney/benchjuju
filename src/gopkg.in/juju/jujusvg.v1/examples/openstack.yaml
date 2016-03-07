@@ -1,0 +1,268 @@
+services: 
+  mongodb: 
+    charm: "cs:precise/mongodb-36"
+    num_units: 1
+    constraints: mem=1G
+    annotations: 
+      "gui-x": "639.4860908103093"
+      "gui-y": "636.380460366218"
+  ceilometer: 
+    charm: "cs:precise/ceilometer-22"
+    num_units: 1
+    constraints: mem=1G
+    annotations: 
+      "gui-x": "350.1477364318532"
+      "gui-y": "922.7442622575415"
+  ceph: 
+    charm: "cs:precise/ceph-27"
+    num_units: 3
+    options: 
+      "ephemeral-unmount": /mnt
+      fsid: "6547bd3e-1397-11e2-82e5-53567c8d32dc"
+      "monitor-secret": AQCXrnZQwI7KGBAAiPofmKEXKxu5bUzoYLVkbQ==
+      "osd-reformat": "yes"
+    constraints: mem=1G
+    annotations: 
+      "gui-x": "-20.643093692706657"
+      "gui-y": "51.01664830551104"
+  cinder: 
+    charm: "cs:precise/cinder-27"
+    num_units: 1
+    options: 
+      "block-device": None
+    annotations: 
+      "gui-x": "194.05177718665982"
+      "gui-y": "266.145686795207"
+  keystone: 
+    charm: "cs:precise/keystone-38"
+    num_units: 1
+    options: 
+      "admin-password": openstack
+      "admin-token": ubuntutesting
+    constraints: mem=1G
+    annotations: 
+      "gui-x": "-4.963964429345083"
+      "gui-y": "468.638517006843"
+  heat: 
+    charm: "cs:precise/heat-4"
+    num_units: 1
+    constraints: mem=1G
+    annotations: 
+      "gui-x": "94.05177718665982"
+      "gui-y": "748.5507197770728"
+  "ceilometer-agent": 
+    charm: "cs:precise/ceilometer-agent-19"
+    num_units: 0
+    annotations: 
+      "gui-x": "309.1965280494909"
+      "gui-y": "552.5094886865305"
+  mysql: 
+    charm: "cs:precise/mysql-48"
+    num_units: 1
+    options: 
+      "dataset-size": "50%"
+    constraints: mem=1G
+    annotations: 
+      "gui-x": "644.9534429914997"
+      "gui-y": "909.841064015354"
+  "nova-cloud-controller": 
+    charm: "cs:precise/nova-cloud-controller-43"
+    num_units: 1
+    options: 
+      "network-manager": Neutron
+      "quantum-security-groups": "yes"
+    constraints: mem=1G
+    annotations: 
+      "gui-x": "1534.2916447820653"
+      "gui-y": "336.380460366218"
+  "neutron-gateway": 
+    charm: "cs:precise/quantum-gateway-21"
+    num_units: 1
+    constraints: mem=1G
+    annotations: 
+      "gui-x": "1051.4050421125935"
+      "gui-y": "95.17794387528511"
+  "nova-compute": 
+    charm: "cs:precise/nova-compute-35"
+    num_units: 3
+    options: 
+      "config-flags": auto_assign_floating_ip=False
+    constraints: mem=4G
+    annotations: 
+      "gui-x": "407.14071845761987"
+      "gui-y": "-100.96660846127398"
+  ntp: 
+    charm: "cs:precise/ntp-3"
+    num_units: 0
+    annotations: 
+      "gui-x": "1404.9864510314626"
+      "gui-y": "-79.0155986051837"
+  glance: 
+    charm: "cs:precise/glance-34"
+    num_units: 1
+    constraints: mem=1G
+    annotations: 
+      "gui-x": "829.8086616110905"
+      "gui-y": "-123.44393373014978"
+  "openstack-dashboard": 
+    charm: "cs:precise/openstack-dashboard-20"
+    num_units: 1
+    constraints: mem=1G
+    annotations: 
+      "gui-x": "998.0178961164997"
+      "gui-y": "850.0023188981665"
+  "rabbitmq-server": 
+    charm: "cs:precise/rabbitmq-server-33"
+    num_units: 1
+    constraints: mem=1G
+    annotations: 
+      "gui-x": "1078.6630377180622"
+      "gui-y": "495.1636348161353"
+  "swift-storage-z1": 
+    charm: "cs:precise/swift-storage-22"
+    num_units: 1
+    options: 
+      "block-device": vdb
+      overwrite: "true"
+    constraints: mem=1G
+    annotations: 
+      "gui-x": "1285.1146978743122"
+      "gui-y": "808.0668330583228"
+  "swift-storage-z2": 
+    charm: "cs:precise/swift-storage-22"
+    num_units: 1
+    options: 
+      "block-device": vdb
+      overwrite: "true"
+      zone: 2
+    constraints: mem=1G
+    annotations: 
+      "gui-x": "1620.5985845930622"
+      "gui-y": "688.7120356950415"
+  "swift-storage-z3": 
+    charm: "cs:precise/swift-storage-22"
+    num_units: 1
+    options: 
+      "block-device": vdb
+      overwrite: "true"
+      zone: 3
+    constraints: mem=1G
+    annotations: 
+      "gui-x": "1791.5662359602497"
+      "gui-y": "337.0991511735572"
+  "swift-proxy": 
+    charm: "cs:precise/swift-proxy-34"
+    num_units: 1
+    options: 
+      "swift-hash": "fdfef9d4-8b06-11e2-8ac0-531c923c8fae"
+      "use-https": "no"
+    constraints: mem=1G
+    annotations: 
+      "gui-x": "1791.5663580305622"
+      "gui-y": "53.22814134689702"
+relations: 
+  - - "ntp:juju-info"
+    - "heat:juju-info"
+  - - "ntp:juju-info"
+    - "openstack-dashboard:juju-info"
+  - - "ntp:juju-info"
+    - "mysql:juju-info"
+  - - "ntp:juju-info"
+    - "rabbitmq-server:juju-info"
+  - - "ntp:juju-info"
+    - "mongodb:juju-info"
+  - - "ntp:juju-info"
+    - "ceilometer:juju-info"
+  - - "ntp:juju-info"
+    - "swift-storage-z3:juju-info"
+  - - "ntp:juju-info"
+    - "swift-storage-z2:juju-info"
+  - - "ntp:juju-info"
+    - "swift-storage-z1:juju-info"
+  - - "ntp:juju-info"
+    - "swift-proxy:juju-info"
+  - - "ntp:juju-info"
+    - "glance:juju-info"
+  - - "ntp:juju-info"
+    - "keystone:juju-info"
+  - - "keystone:shared-db"
+    - "mysql:shared-db"
+  - - "nova-cloud-controller:shared-db"
+    - "mysql:shared-db"
+  - - "nova-cloud-controller:amqp"
+    - "rabbitmq-server:amqp"
+  - - "nova-cloud-controller:image-service"
+    - "glance:image-service"
+  - - "nova-cloud-controller:identity-service"
+    - "keystone:identity-service"
+  - - "nova-cloud-controller:cloud-compute"
+    - "nova-compute:cloud-compute"
+  - - "nova-compute:shared-db"
+    - "mysql:shared-db"
+  - - "nova-compute:amqp"
+    - "rabbitmq-server:amqp"
+  - - "nova-compute:image-service"
+    - "glance:image-service"
+  - - "nova-compute:ceph"
+    - "ceph:client"
+  - - "glance:shared-db"
+    - "mysql:shared-db"
+  - - "glance:identity-service"
+    - "keystone:identity-service"
+  - - "glance:ceph"
+    - "ceph:client"
+  - - "cinder:image-service"
+    - "glance:image-service"
+  - - "cinder:shared-db"
+    - "mysql:shared-db"
+  - - "cinder:amqp"
+    - "rabbitmq-server:amqp"
+  - - "nova-cloud-controller:cinder-volume-service"
+    - "cinder:cinder-volume-service"
+  - - "cinder:identity-service"
+    - "keystone:identity-service"
+  - - "cinder:ceph"
+    - "ceph:client"
+  - - "neutron-gateway:shared-db"
+    - "mysql:shared-db"
+  - - "neutron-gateway:amqp"
+    - "rabbitmq-server:amqp"
+  - - "nova-cloud-controller:quantum-network-service"
+    - "neutron-gateway:quantum-network-service"
+  - - "openstack-dashboard:identity-service"
+    - "keystone:identity-service"
+  - - "swift-proxy:identity-service"
+    - "keystone:identity-service"
+  - - "swift-proxy:swift-storage"
+    - "swift-storage-z1:swift-storage"
+  - - "swift-proxy:swift-storage"
+    - "swift-storage-z2:swift-storage"
+  - - "swift-proxy:swift-storage"
+    - "swift-storage-z3:swift-storage"
+  - - "ceilometer:identity-service"
+    - "keystone:identity-service"
+  - - "ceilometer:amqp"
+    - "rabbitmq-server:amqp"
+  - - "ceilometer:shared-db"
+    - "mongodb:database"
+  - - "nova-compute:nova-ceilometer"
+    - "ceilometer-agent:nova-ceilometer"
+  - - "ceilometer-agent:ceilometer-service"
+    - "ceilometer:ceilometer-service"
+  - - "heat:identity-service"
+    - "keystone:identity-service"
+  - - "heat:shared-db"
+    - "mysql:shared-db"
+  - - "heat:amqp"
+    - "rabbitmq-server:amqp"
+  - - "ntp:juju-info"
+    - "nova-compute:juju-info"
+  - - "ntp:juju-info"
+    - "nova-cloud-controller:juju-info"
+  - - "ntp:juju-info"
+    - "neutron-gateway:juju-info"
+  - - "ntp:juju-info"
+    - "ceph:juju-info"
+  - - "ntp:juju-info"
+    - "cinder:juju-info"
+series: precise
