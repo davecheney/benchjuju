@@ -2,7 +2,7 @@
 
 This is a Go compiler benchmark data set. This is not Juju, you want https://github.com/juju/juju.
 
-This is a clone of Juju at revision NNN.
+This is a clone of Juju at revision 9fcb1f0d5440345d4ca5cab51ee411cdc1204925.
 
 # Usage
 
