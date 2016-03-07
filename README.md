@@ -8,7 +8,7 @@ This is a clone of Juju at revision 9fcb1f0d5440345d4ca5cab51ee411cdc1204925.
 
 1. Check out this repo
 2. Put whatever version of Go you want at the top of your `$PATH`
-3. bash benchjuju
+3. `bash benchjuju.bash`
 
 This will build a large command, github.com/juju/juju/cmd/jujud
 
