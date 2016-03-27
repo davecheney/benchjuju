@@ -65,6 +65,8 @@ echo "Benchmarking juju old"
 
 echo "Building go $2"
 
+git checkout $2
+
 if [ $REBUILD_ALL = 1 ]; then
     ./make.bash > /dev/null 2>&1
 else
