@@ -2,10 +2,12 @@
 
 set -e
 
-go version
+GO=go
 
 export GOPATH=$(pwd)
 
+${GO} version
+
 for i in $(seq 1 10); do
-	time go build github.com/juju/juju/cmd/jujud
+	time ${GO} build github.com/juju/juju/cmd/jujud
 done
