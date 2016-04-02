@@ -18,3 +18,6 @@ Results are tracked periodically here
 
 https://docs.google.com/spreadsheets/d/1mczKWp3DUuQvIAwZiORD29j5LRb96QZC4mZDn72gAE4/edit?usp=sharing
 
+# Other scripts
+
+benchlink.bash and benchlinkbranch.bash are scripts that use [benchstat](rsc.io/benchstat) to aid in benchmarking Go linker changes.
