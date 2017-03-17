@@ -9,5 +9,7 @@ export GOPATH=$(pwd)
 ${GO} version
 
 for i in $(seq 1 10); do
-	time ${GO} build github.com/juju/juju/cmd/jujud
+	/usr/bin/time -f '%e' ${GO} build -o /tmp/jujud github.com/juju/juju/cmd/jujud \
+		&& ls -al /tmp/jujud \
+		&& rm /tmp/jujud
 done
